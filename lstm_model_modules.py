@@ -73,3 +73,35 @@ def real_values_vs_predictions(df_file_path, predictions, look_back):
   # Plotting real demand values vs the predicted ones, using 2 different colors.
   fig = px.scatter(df, x='Hour', y='Demand', color='Dataset', hover_data = ['Specific hour', 'Day of week'])
   fig.show() 
+
+
+# Defininig a function to preprocess data coming from a csv file, for the multivariate model
+def preprocess_csv_file(file_path):
+  '''Preprocesses the data coming from a csv file, for a given file path. It returns the 
+  respective Pandas DataFrame.'''
+
+  # Importing the csv file as a Pandas DataFrame
+  data = pd.read_csv(file_path)
+  
+  # Encoding the "Day of week" feature using one-hot encoding
+  one_hot = pd.get_dummies(data['Day of week'])
+  data = pd.concat([data, one_hot], axis=1)
+
+  # Keeping only the required features
+  data = data[['Demand', 'Specific hour', 'Friday', 'Monday', 'Saturday', 'Sunday', 'Thursday', 'Tuesday', 'Wednesday']]
+
+  return data
+
+
+# Defining a function to convert into the input and output data format required by the LSTM model
+def create_dataset_updated(data, n_future=1, n_past = 24):
+  '''Creates and returns the inputs and outputs for the LSTM model, for a given dataset, a number determining
+  how far in the future we want to predict and a look back range (number of timesteps)'''
+
+  x, y = [], []
+    
+  for i in range(n_past, len(data) - n_future +1):
+    x.append(data.iloc[i - n_past:i, 0:data.shape[1]])
+    y.append(data.iloc[i + n_future - 1:i + n_future, 0])
+
+  return np.array(x), np.array(y)
