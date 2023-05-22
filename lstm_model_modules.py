@@ -57,11 +57,15 @@ def real_values_vs_predictions(df_file_path, predictions, look_back):
   # Importing the csv file containing real values, as a Pandas DataFrame.
   real_val_df = pd.read_csv(df_file_path)
 
+  # Dropping the records that will have the same value in both DataFrames
+  # due to the look_back range of LSTM model
+  real_val_df = real_val_df.drop(real_val_df.index[ : look_back])
+
   # Creating a deep copy of the above DataFrame
   predictions_df = real_val_df.copy()
 
   # Updating the above DataFrame with the predicted values
-  predictions_df.iloc[look_back:, 0] = predictions
+  predictions_df.iloc[ : , 0] = predictions
 
   # Rounding the demand values to the nearest integer
   predictions_df['Demand'] = predictions_df['Demand'].round()
