@@ -91,8 +91,16 @@ def preprocess_csv_file(file_path):
   one_hot = pd.get_dummies(data['Day of week'])
   data = pd.concat([data, one_hot], axis=1)
 
+  # Encoding the "conditions" feature using one-hot encoding
+  one_hot = pd.get_dummies(data['conditions'])
+  data = pd.concat([data, one_hot], axis=1)
+
   # Keeping only the required features
-  data = data[['Demand', 'Specific hour', 'Friday', 'Monday', 'Saturday', 'Sunday', 'Thursday', 'Tuesday', 'Wednesday']]
+  data = data[['Demand', 'Specific hour', 'Friday', 'Monday', 'Saturday', 'Sunday', 'Thursday', 'Tuesday', 'Wednesday',	
+               'Rain, Partially cloudy', 'Rain', 'Clear', 'Partially cloudy',
+                'Overcast', 'Rain, Overcast', 'Snow, Rain',
+                'Snow, Rain, Partially cloudy', 'Snow, Rain, Overcast',
+                'Snow, Overcast', 'Snow']]
 
   return data
 
